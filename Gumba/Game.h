@@ -4,6 +4,10 @@
 /// </summary>
 #ifndef GAME_HPP
 #define GAME_HPP
+
+#pragma warning (push)
+#pragma warning (disable:4275)
+
 /// <summary>
 /// include guards used so we don't process this file twice
 /// same as #pragma once
@@ -29,7 +33,7 @@ private:
 	
 
 	void processEvents();
-	void processKeys(sf::Event t_event);
+	void processKeys(const std::optional<sf::Event> t_event);
 	void update(sf::Time t_deltaTime);
 	void render();
 	
@@ -38,13 +42,15 @@ private:
 	void setupGoombas();
 
 	sf::RenderWindow m_window; // main SFML window
-	sf::Sprite m_background; // sprite for background
-	sf::Sprite m_logoSprite; // SPRITE FOR LOGO
+	sf::Texture tempTexture; // just used for sprite constructor
+	sf::Sprite m_background{ tempTexture }; // sprite for background
+	sf::Sprite m_logoSprite{ tempTexture }; // SPRITE FOR LOGO
 	Goomba m_goombas[NO_OF_GOOMBAS];
 	
 	bool m_exitGame; // control exiting game
 
 };
 
+#pragma warning (pop) 
 #endif // !GAME_HPP
 

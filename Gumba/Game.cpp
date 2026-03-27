@@ -18,7 +18,7 @@
 /// load and setup thne image
 /// </summary>
 Game::Game() :
-	m_window{ sf::VideoMode{ 800U, 600U, 32U }, "SFML Game" },
+	m_window{ sf::VideoMode{ sf::Vector2u{800U, 600U}, 32U }, "SFML Game" },
 	m_exitGame{false} //when true game will exit
 {
 	
@@ -69,17 +69,17 @@ void Game::run()
 /// </summary>
 void Game::processEvents()
 {
-	sf::Event newEvent;
-	while (m_window.pollEvent(newEvent))
+	while (const std::optional newEvent = m_window.pollEvent())
 	{
-		if ( sf::Event::Closed == newEvent.type) // window message
+		if (newEvent->is<sf::Event::Closed>()) // close window message 
 		{
 			m_exitGame = true;
 		}
-		if (sf::Event::KeyPressed == newEvent.type) //user pressed a key
+		if (newEvent->is<sf::Event::KeyPressed>()) //user pressed a key
 		{
 			processKeys(newEvent);
 		}
+
 	}
 }
 
@@ -88,14 +88,14 @@ void Game::processEvents()
 /// deal with key presses from the user
 /// </summary>
 /// <param name="t_event">key press event</param>
-void Game::processKeys(sf::Event t_event)
+void Game::processKeys(const std::optional<sf::Event> t_event)
 {
-	if (sf::Keyboard::Escape == t_event.key.code)
+	const sf::Event::KeyPressed* newKeypress = t_event->getIf<sf::Event::KeyPressed>();
+	if (sf::Keyboard::Key::Escape == newKeypress->code)
 	{
 		m_exitGame = true;
 	}
 }
-
 /// <summary>
 /// Update the game world
 /// </summary>
@@ -139,13 +139,13 @@ void Game::setupSprite()
 		std::cout << "problem with atlas";
 	}
 	m_background.setTexture(textureAtlas);
-	m_background.setTextureRect(sf::IntRect{ 0,507,1280,800 });
-	m_background.setScale(800.0f / 1280.0f, 600.0f / 800.0f);
+	m_background.setTextureRect(sf::IntRect{ sf::Vector2i{0,507},sf::Vector2i{1280,800} });
+	m_background.setScale(sf::Vector2f{ 800.0f / 1280.0f, 600.0f / 800.0f });
 	
 	m_logoSprite.setTexture(textureAtlas);
-	m_logoSprite.setTextureRect(sf::IntRect{ 520,0,684,507 });
-	m_logoSprite.setPosition(0.0f, 0.0f);
-	m_logoSprite.setScale(0.5f, 0.5f);
+	m_logoSprite.setTextureRect(sf::IntRect{ sf::Vector2i{520,0},sf::Vector2i{684,507 } });
+	m_logoSprite.setPosition(sf::Vector2f{ 0.0f, 0.0f });
+	m_logoSprite.setScale(sf::Vector2f{ 0.5f, 0.5f });
 }
 
 void Game::setupGoombas()
